@@ -1,18 +1,34 @@
 import { Outlet, Navigate } from 'react-router-dom'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 const PrivateRoutes = () => {
-    const token = JSON.parse(localStorage.getItem('tokens')) || {};
-    const user = JSON.parse(localStorage.getItem('user')) || {};
-    const isAuthenticated = localStorage.getItem('isAuthenticated') || false;
-    console.log(Object.keys(token).length, Object.keys(user).length, isAuthenticated)
-    if (Object.keys(token).length && Object.keys(user).length && isAuthenticated) {
-        return (<Outlet />)
+    const datastorage = {};
+    const [data, setData] = useState({});
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const fetchData = async () => {
+            chrome.storage.sync.get(['tokens', 'user', 'isAuthenticated'], (data) => {
+                setData(data);
+                setLoading(false);
+
+            });
+        }
+        fetchData().catch(console.error);;
+    }, [])
+
+
+    console.log(data);
+    if (loading) {
+        return <h1>Loading</h1>
     } else {
-        localStorage.removeItem('tokens');
-        localStorage.removeItem('user');
-        localStorage.removeItem('isAuthenticated');
-        return (<Navigate to="/login" />)
+
+        if (data && data.isAuthenticated && data.tokens && data.user) {
+            return (<Outlet />)
+        } else {
+            return (<Navigate to="/login" />)
+        }
+
     }
+
 
 }
 

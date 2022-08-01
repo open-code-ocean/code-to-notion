@@ -35915,6 +35915,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_hook_form__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.esm.mjs");
 /* harmony import */ var _services_auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/auth */ "./src/pages/Options/services/auth.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
 /* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-toastify */ "./node_modules/react-toastify/dist/react-toastify.esm.mjs");
 /* module decorator */ module = __webpack_require__.hmd(module);
 (function () {
@@ -35932,6 +35933,7 @@ var __signature__ = typeof reactHotLoaderGlobal !== 'undefined' ? reactHotLoader
 
 
 
+
 function Login() {
   const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const {
@@ -35941,18 +35943,17 @@ function Login() {
     formState: {
       errors
     }
-  } = (0,react_hook_form__WEBPACK_IMPORTED_MODULE_3__.useForm)();
+  } = (0,react_hook_form__WEBPACK_IMPORTED_MODULE_3__.useForm)({});
 
   const onSubmit = data => {
+    console.log(data);
     _services_auth__WEBPACK_IMPORTED_MODULE_1__["default"].login(data).then(res => {
-      window.localStorage.setItem("tokens", JSON.stringify(res.data.tokens));
-      window.localStorage.setItem("user", JSON.stringify(res.data.user));
-      window.localStorage.setItem("isAuthenticated", true);
-
-      /*#__PURE__*/
-      react__WEBPACK_IMPORTED_MODULE_0__.createElement(Navigate, {
-        to: "/connect"
+      chrome.storage.sync.set({
+        tokens: JSON.stringify(res.data.tokens),
+        user: JSON.stringify(res.data.user),
+        isAuthenticated: true
       });
+      console.log(initStorageCache, "success");
     }).catch(err => {
       react_toastify__WEBPACK_IMPORTED_MODULE_2__.toast.error(err);
     });
@@ -36003,8 +36004,8 @@ function Login() {
     className: "grid grid-cols-2 gap-1"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "text-center sm:text-left whitespace-nowrap"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-    href: "/register",
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
+    to: "/register",
     className: "transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
@@ -36072,22 +36073,36 @@ var __signature__ = typeof reactHotLoaderGlobal !== 'undefined' ? reactHotLoader
 
 
 const PrivateRoutes = () => {
-  const token = JSON.parse(localStorage.getItem('tokens')) || {};
-  const user = JSON.parse(localStorage.getItem('user')) || {};
-  const isAuthenticated = localStorage.getItem('isAuthenticated') || false;
-  console.log(Object.keys(token).length, Object.keys(user).length, isAuthenticated);
+  const datastorage = {};
+  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const fetchData = async () => {
+      chrome.storage.sync.get(['tokens', 'user', 'isAuthenticated'], data => {
+        setData(data);
+        setLoading(false);
+      });
+    };
 
-  if (Object.keys(token).length && Object.keys(user).length && isAuthenticated) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Outlet, null);
+    fetchData().catch(console.error);
+    ;
+  }, []);
+  console.log(data);
+
+  if (loading) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "Loading");
   } else {
-    localStorage.removeItem('tokens');
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAuthenticated');
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Navigate, {
-      to: "/login"
-    });
+    if (data && data.isAuthenticated && data.tokens && data.user) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Outlet, null);
+    } else {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Navigate, {
+        to: "/login"
+      });
+    }
   }
 };
+
+__signature__(PrivateRoutes, "useState{[data, setData]({})}\nuseState{[loading, setLoading](true)}\nuseEffect{}");
 
 const _default = PrivateRoutes;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_default);
@@ -36128,6 +36143,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_hook_form__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.esm.mjs");
 /* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-toastify */ "./node_modules/react-toastify/dist/react-toastify.esm.mjs");
 /* harmony import */ var _services_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/auth */ "./src/pages/Options/services/auth.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
 /* module decorator */ module = __webpack_require__.hmd(module);
 (function () {
   var enterModule = typeof reactHotLoaderGlobal !== 'undefined' ? reactHotLoaderGlobal.enterModule : undefined;
@@ -36139,6 +36155,7 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 var __signature__ = typeof reactHotLoaderGlobal !== 'undefined' ? reactHotLoaderGlobal.default.signature : function (a) {
   return a;
 };
+
 
 
 
@@ -36230,7 +36247,8 @@ function Register() {
     className: "grid grid-cols-2 gap-1"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "text-center sm:text-left whitespace-nowrap"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
+    to: "/login",
     className: "transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
@@ -36570,6 +36588,7 @@ const getCurrentUser = () => {
 };
 
 const _default = {
+  http,
   register,
   login,
   getRefreshToken,
@@ -43520,7 +43539,7 @@ eventManager.on(2
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("539b4455fe3e8dcd574d")
+/******/ 		__webpack_require__.h = () => ("cd5d6d6aee62298108f8")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/harmony module decorator */

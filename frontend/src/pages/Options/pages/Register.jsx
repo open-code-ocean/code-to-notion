@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from 'react-toastify';
 import auth from "../services/auth";
+import { Link } from "react-router-dom";
 export default function Register() {
     const [error, setError] = useState('');
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -87,7 +88,7 @@ export default function Register() {
                         <div className="py-5">
                             <div className="grid grid-cols-2 gap-1">
                                 <div className="text-center sm:text-left whitespace-nowrap">
-                                    <button className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                                    <Link to="/login" className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -103,7 +104,7 @@ export default function Register() {
                                             />
                                         </svg>
                                         <span className="inline-block ml-1">Already have an account? Signin</span>
-                                    </button>
+                                    </Link>
                                 </div>
 
                             </div>

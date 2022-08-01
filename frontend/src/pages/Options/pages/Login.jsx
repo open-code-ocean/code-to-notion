@@ -1,17 +1,25 @@
 import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
 import auth from "../services/auth";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 export default function Login() {
     const [error, setError] = useState('');
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm(
+        {
+
+        }
+    );
     const onSubmit = data => {
+        console.log(data)
         auth.login(data).then(
             (res) => {
-                window.localStorage.setItem("tokens", JSON.stringify(res.data.tokens));
-                window.localStorage.setItem("user", JSON.stringify(res.data.user));
-                window.localStorage.setItem("isAuthenticated", true);
-                <Navigate to="/connect" />
+                chrome.storage.sync.set({
+                    tokens: JSON.stringify(res.data.tokens),
+                    user: JSON.stringify(res.data.user),
+                    isAuthenticated: true
+                });
+                console.log(initStorageCache, "success");
 
             }
         ).catch(
@@ -68,7 +76,7 @@ export default function Login() {
                         <div className="py-5">
                             <div className="grid grid-cols-2 gap-1">
                                 <div className="text-center sm:text-left whitespace-nowrap">
-                                    <a href="/register" className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                                    <Link to="/register" className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -84,7 +92,7 @@ export default function Login() {
                                             />
                                         </svg>
                                         <span className="inline-block ml-1">Don't have an account? Create Now.</span>
-                                    </a>
+                                    </Link>
                                 </div>
 
                             </div>

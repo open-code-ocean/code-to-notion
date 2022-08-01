@@ -2515,6 +2515,14 @@ var __signature__ = typeof reactHotLoaderGlobal !== 'undefined' ? reactHotLoader
 
 
 
+const getLocalChromeStorage = property => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tokens', 'user'], res => {
+      resolve(res);
+    });
+  });
+};
+
 const getLevel = level => {
   switch (level) {
     case 'Easy':
@@ -2662,8 +2670,16 @@ const leetloader = setInterval(() => {
   }
 }, 2000);
 const notionCallBack = code => {
-  axios__WEBPACK_IMPORTED_MODULE_0___default().get(`http://localhost:5000/v1/notion/call-back1?code=${code}&state=`).then(res => {
-    console.log(res);
+  getLocalChromeStorage('tokens').then(tokens => {
+    console.log(JSON.parse(tokens.tokens), JSON.parse(tokens.user).id);
+    axios__WEBPACK_IMPORTED_MODULE_0___default().get(`http://localhost:5000/v1/notion/call-back1/${JSON.parse(tokens.user).id}?code=${code}&state=`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(tokens.tokens).access.token}`,
+        'Content-type': 'application/json'
+      }
+    }).then(res => {
+      console.log(res);
+    });
   });
   return {
     status: 200
@@ -2678,6 +2694,7 @@ const notionCallBack = code => {
     return;
   }
 
+  reactHotLoader.register(getLocalChromeStorage, "getLocalChromeStorage", "F:\\Freelancing\\2.0\\Opensource\\open-code-ocean\\SaveToNotion\\frontend\\src\\pages\\Content\\modules\\Leetcode.js");
   reactHotLoader.register(getLevel, "getLevel", "F:\\Freelancing\\2.0\\Opensource\\open-code-ocean\\SaveToNotion\\frontend\\src\\pages\\Content\\modules\\Leetcode.js");
   reactHotLoader.register(getFormatedJson, "getFormatedJson", "F:\\Freelancing\\2.0\\Opensource\\open-code-ocean\\SaveToNotion\\frontend\\src\\pages\\Content\\modules\\Leetcode.js");
   reactHotLoader.register(parseCode, "parseCode", "F:\\Freelancing\\2.0\\Opensource\\open-code-ocean\\SaveToNotion\\frontend\\src\\pages\\Content\\modules\\Leetcode.js");
@@ -2783,7 +2800,7 @@ const notionCallBack = code => {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("539b4455fe3e8dcd574d")
+/******/ 		__webpack_require__.h = () => ("cd5d6d6aee62298108f8")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/harmony module decorator */

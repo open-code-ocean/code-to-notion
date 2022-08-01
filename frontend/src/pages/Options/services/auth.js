@@ -94,6 +94,7 @@ const getCurrentUser = () => {
   }
 };
 export default {
+  http,
   register,
   login,
   getRefreshToken,

@@ -1,4 +1,11 @@
 import axios from 'axios';
+const getLocalChromeStorage = (property) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tokens', 'user'], (res) => {
+      resolve(res);
+    });
+  });
+};
 
 const getLevel = (level) => {
   switch (level) {
@@ -149,11 +156,25 @@ const leetloader = setInterval(() => {
 }, 2000);
 
 export const notionCallBack = (code) => {
-  axios
-    .get(`http://localhost:5000/v1/notion/call-back1?code=${code}&state=`)
-    .then((res) => {
-      console.log(res);
-    });
+  getLocalChromeStorage('tokens').then((tokens) => {
+    console.log(JSON.parse(tokens.tokens), JSON.parse(tokens.user).id);
+    axios
+      .get(
+        `http://localhost:5000/v1/notion/call-back1/${
+          JSON.parse(tokens.user).id
+        }?code=${code}&state=`,
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(tokens.tokens).access.token}`,
+            'Content-type': 'application/json',
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      });
+  });
+
   return {
     status: 200,
   };
