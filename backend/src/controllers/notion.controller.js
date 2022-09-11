@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const axios = require('axios');
+const { notionService } = require('../services');
 const handleNotionCallback = async (token) => {
   const response = await axios.post(
     'https://api.notion.com/v1/oauth/token',
@@ -25,15 +26,17 @@ const handleNotionCallback = async (token) => {
 const handleCallback = catchAsync(async (req, res) => {
   console.log('handleCallback', req.query.code);
   const response = await handleNotionCallback(req.query.code);
+  console.log(response.data);
   if (response.status === 200) {
+    const newNotion = await notionService.createNotion(req.user, response.data);
     res.status(httpStatus.OK).json({
       status: 'success',
-      data: response.data,
+      data: newNotion,
     });
   } else {
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       status: 'error',
-      data: 'Something went wrong',
+      data: response.data,
     });
   }
 });

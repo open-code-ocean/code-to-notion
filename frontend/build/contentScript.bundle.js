@@ -2481,11 +2481,12 @@ if (window.location.host === 'localhost:5000') {
   const link = window.location.href;
   const code = link.match(/\?code=([\w\/\-]+)/)[1];
   console.log(code);
-  console.log((0,_modules_Leetcode__WEBPACK_IMPORTED_MODULE_0__.notionCallBack)(code)); //   chrome.runtime.sendMessage({
-  //     type: 'leetcode',
-  //     code: code,
-  //     closeCurrentTab: true,
-  //   });
+  console.log((0,_modules_Leetcode__WEBPACK_IMPORTED_MODULE_0__.notionCallBack)(code));
+  chrome.runtime.sendMessage({
+    type: 'leetcode',
+    code: code,
+    closeCurrentTab: true
+  });
 }
 
 /***/ }),
@@ -2800,7 +2801,7 @@ const notionCallBack = code => {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("cd5d6d6aee62298108f8")
+/******/ 		__webpack_require__.h = () => ("80c0ed95a61f9c5f5837")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/harmony module decorator */

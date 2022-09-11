@@ -5,9 +5,9 @@ if (window.location.host === 'localhost:5000') {
   const code = link.match(/\?code=([\w\/\-]+)/)[1];
   console.log(code);
   console.log(notionCallBack(code));
-//   chrome.runtime.sendMessage({
-//     type: 'leetcode',
-//     code: code,
-//     closeCurrentTab: true,
-//   });
+  chrome.runtime.sendMessage({
+    type: 'leetcode',
+    code: code,
+    closeCurrentTab: true,
+  });
 }
